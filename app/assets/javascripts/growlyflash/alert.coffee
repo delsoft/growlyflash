@@ -47,7 +47,7 @@ class Growlyflash
       html += h.title(@opts) if title
       html += @flash.msg
 
-      @el = ($ '<div>', html: html, class: @class_list().join(' '), role: "alert")
+      @el = ($ '<div>', html: html, class: @class_list(@flash).join(' '), role: "alert")
       @el.appendTo(target)
 
       before_show?.call(this)
@@ -57,11 +57,14 @@ class Growlyflash
       @show()
       setTimeout(@close, @opts.delay) if delay
 
-    class_list: ->
+    class_list: (flash) ->
       list = [].concat(@opts.class)
       add = _add.bind(list)
       add 'alert', "dismissable"     if @opts.dismiss
-      add 'alert', @opts.type        if @opts.type?
+      if @opts.type?
+        add 'alert', @opts.type
+      else
+        add 'alert', flash.key
       add 'growlyflash', @opts.align if @opts.align?
       list
 
